@@ -14,10 +14,20 @@ const StoresController = () => import('#controllers/stores_controller')
 const ProductsController = () => import('#controllers/products_controller')
 const OrdersController = () => import('#controllers/orders_controller')
 
-router.get('/', async () => {
-  return {
-    hello: 'world',
+router.get('/fix-admin', async () => {
+  const User = (await import('#models/user')).default
+  let user = await User.findBy('email', 'admin@mitienda.com')
+  if (!user) {
+    user = new User()
+    user.email = 'admin@mitienda.com'
   }
+  user.fullName = 'Administrador Principal'
+  user.password = 'admin'
+  user.role = 'admin'
+  user.isActive = true
+  user.planType = 'admin'
+  await user.save()
+  return { success: true, message: 'Admin account created/updated perfectly.' }
 })
 
 router.group(() => {

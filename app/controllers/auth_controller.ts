@@ -6,6 +6,11 @@ export default class AuthController {
   async register({ request, response }: HttpContext) {
     const data = request.only(['email', 'password', 'fullName', 'role'])
     
+    const existingUser = await User.findBy('email', data.email)
+    if (existingUser) {
+      return response.badRequest({ message: 'El correo electrónico ya está registrado.' })
+    }
+    
     // Simple validation could go here
     const isSeller = data.role === 'seller'
     const user = await User.create({
