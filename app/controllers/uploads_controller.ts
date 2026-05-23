@@ -1,7 +1,5 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import app from '@adonisjs/core/services/app'
 import fs from 'node:fs'
-import crypto from 'node:crypto'
 
 export default class UploadsController {
   async store({ request, response }: HttpContext) {
