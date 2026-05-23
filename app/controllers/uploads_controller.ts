@@ -18,19 +18,13 @@ export default class UploadsController {
       return response.badRequest(file.errors)
     }
 
-    // Asegurar que exista la carpeta
-    const uploadsDir = app.makePath('public/uploads')
-    if (!fs.existsSync(uploadsDir)) {
-      fs.mkdirSync(uploadsDir, { recursive: true })
+    try {
+      const fileBuffer = fs.readFileSync(file.tmpPath!)
+      const base64 = fileBuffer.toString('base64')
+      const url = `data:image/${file.extname};base64,${base64}`
+      return response.ok({ url })
+    } catch (error) {
+      return response.internalServerError('Error al procesar la imagen')
     }
-
-    const fileName = `${crypto.randomUUID()}.${file.extname}`
-    await file.move(uploadsDir, {
-      name: fileName,
-    })
-
-    // Return the public URL
-    const url = `/uploads/${fileName}`
-    return response.ok({ url })
   }
 }
