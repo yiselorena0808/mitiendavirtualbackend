@@ -41,6 +41,10 @@ const bodyParserConfig = defineConfig({
       'application/vnd.api+json',
       'application/csp-report',
     ],
+    /**
+     * Maximum accepted payload size for JSON requests.
+     */
+    limit: '20mb',
   },
 
   /**
