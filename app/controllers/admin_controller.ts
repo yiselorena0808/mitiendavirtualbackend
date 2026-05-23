@@ -1,5 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import User from '#models/user'
+import Store from '#models/store'
+import Product from '#models/product'
 import { DateTime } from 'luxon'
 
 export default class AdminController {
@@ -20,6 +22,16 @@ export default class AdminController {
       .orderBy('createdAt', 'desc')
       
     return response.ok(buyers)
+  }
+
+  async getStores({ response }: HttpContext) {
+    const stores = await Store.query().preload('user').orderBy('createdAt', 'desc')
+    return response.ok(stores)
+  }
+
+  async getProducts({ response }: HttpContext) {
+    const products = await Product.query().preload('store').orderBy('createdAt', 'desc')
+    return response.ok(products)
   }
 
   async getStats({ response }: HttpContext) {
