@@ -14,6 +14,37 @@ export default class AdminController {
     return response.ok(sellers)
   }
 
+  async getBuyers({ response }: HttpContext) {
+    const buyers = await User.query()
+      .where('role', 'buyer')
+      .orderBy('createdAt', 'desc')
+      
+    return response.ok(buyers)
+  }
+
+  async getStats({ response }: HttpContext) {
+    const sellersCount = await User.query().where('role', 'seller').count('* as total')
+    const buyersCount = await User.query().where('role', 'buyer').count('* as total')
+    const activeSellersCount = await User.query().where('role', 'seller').andWhere('isActive', true).count('* as total')
+
+    return response.ok({
+      totalSellers: sellersCount[0].$extras.total || 0,
+      totalBuyers: buyersCount[0].$extras.total || 0,
+      activeSellers: activeSellersCount[0].$extras.total || 0
+    })
+  }
+
+  async updatePassword({ request, params, response }: HttpContext) {
+    const userId = params.id
+    const { password } = request.only(['password'])
+
+    const userToUpdate = await User.findOrFail(userId)
+    userToUpdate.password = password
+    await userToUpdate.save()
+
+    return response.ok({ message: 'Contraseña actualizada' })
+  }
+
   async updateSubscription({ request, params, response }: HttpContext) {
     const sellerId = params.id
     const { isActive, addDays, planType } = request.only(['isActive', 'addDays', 'planType'])

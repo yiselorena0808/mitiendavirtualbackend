@@ -92,8 +92,11 @@ router.group(() => {
 
   // Admin routes
   router.group(() => {
+    router.get('admin/stats', [() => import('#controllers/admin_controller'), 'getStats'])
     router.get('admin/sellers', [() => import('#controllers/admin_controller'), 'getSellers'])
+    router.get('admin/buyers', [() => import('#controllers/admin_controller'), 'getBuyers'])
     router.put('admin/sellers/:id', [() => import('#controllers/admin_controller'), 'updateSubscription'])
+    router.put('admin/users/:id/password', [() => import('#controllers/admin_controller'), 'updatePassword'])
   }).use(middleware.auth({ guards: ['api'] }))
 
 }).prefix('api')
